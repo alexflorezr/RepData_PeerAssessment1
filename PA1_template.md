@@ -24,7 +24,6 @@ The mean total number of steps is 1.0766\times 10^{4}, showed in the histogram w
 
 ```r
 ts_steps <- aggregate(activity_no_na$steps, by=list(activity_no_na$interval), FUN=mean)
-#ts_steps_sd <- aggregate(activity_no_na$steps, by=list(activity_no_na$interval), FUN=sd, na.rm=F)
 plot(ts_steps$Group.1, ts_steps$x, type = "l", 
      frame=F, lwd=2, xlab = "5-min interval", ylab = "Mean steps", xlim=c(0,2500))
 max_step <- ts_steps[which(ts_steps$x == max(ts_steps$x)), ]
@@ -55,19 +54,17 @@ abline(v=mean(total_steps_day_imp$x), lwd=3)
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
-
 ```r
 activity$weekday <- weekdays(activity$date)
 activity_WKND <- subset(activity, grepl("S(at|un)", activity$weekday))
 activity_WEEK <- subset(activity, !grepl("S(at|un)", activity$weekday))
-par(mfrow=c(1,2))
-mean_steps_WEEK <- aggregate(activity_WEEK$steps, by=list(activity_WEEK$date), FUN=mean)
-hist(mean_steps_WEEK$x, xlab="Mean steps weekdays", ylab="NUmber of days", main = NA, col = "#7AC5CD", 
-     border = "white", ylim=c(0,14))
-mean_steps_WKND <- aggregate(activity_WKND$steps, by=list(activity_WKND$date), FUN=mean)
-hist(mean_steps_WKND$x, xlab="Mean steps weekends", ylab = "Number of days", main = NA, col = "#CD3333", 
-     border = "white", breaks = seq(0,80, 10), ylim=c(0,14))
+ts_steps_WEEK <- aggregate(activity_WEEK$imputed_steps, by=list(activity_WEEK$interval), FUN=mean)
+ts_steps_WKND <- aggregate(activity_WKND$imputed_steps, by=list(activity_WKND$interval), FUN=mean)
+par(mfrow=c(2,1))
+plot(ts_steps_WEEK$Group.1, ts_steps_WEEK$x, type = "l", frame=F, lwd=2, xlab = "5-min interval", ylab = "Mean steps WEEK", ylim = c(0,210))
+plot(ts_steps_WKND$Group.1, ts_steps_WKND$x, type = "l", frame=F, lwd=2, xlab = "5-min interval", ylab = "Mean steps WKND", ylim = c(0,210))
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 
