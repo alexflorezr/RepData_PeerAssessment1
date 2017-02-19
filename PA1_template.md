@@ -1,28 +1,28 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 activity <- read.csv(file = "activity.csv", header = T, stringsAsFactors = F)
 activity$date <-  as.Date(activity$date, format = "%Y-%m-%d")
 ```
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 activity_no_na <- na.omit(activity)
 total_steps_day <- aggregate(activity_no_na$steps, by=list(activity_no_na$date), FUN=sum)
 hist(total_steps_day$x, xlab="Steps", ylab="Days", main = NA, col = "#7AC5CD", border = "white")
 abline(v=mean(total_steps_day$x), lwd=3)
 ```
 
-The mean total number of steps is `r round(mean(total_steps_day$x))`, showed in the histogram with a black vertical line, the median total number of steps is `r round(median(total_steps_day$x))`
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+The mean total number of steps is 1.0766\times 10^{4}, showed in the histogram with a black vertical line, the median total number of steps is 1.0765\times 10^{4}
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 ts_steps <- aggregate(activity_no_na$steps, by=list(activity_no_na$interval), FUN=mean)
 #ts_steps_sd <- aggregate(activity_no_na$steps, by=list(activity_no_na$interval), FUN=sd, na.rm=F)
 plot(ts_steps$Group.1, ts_steps$x, type = "l", 
@@ -31,10 +31,13 @@ max_step <- ts_steps[which(ts_steps$x == max(ts_steps$x)), ]
 points(max_step, col="#EE3B3B", pch=8 )
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 ## Imputing missing values
 The 5-min intervals with steps values equal to NA will be replaced with the average number of steps for the same time interval.
 
-```{r}
+
+```r
 activity$imputed_steps <- activity$steps
 for(i in seq_along(activity$interval)){
         if(is.na(activity$imputed_steps[i])){
@@ -46,11 +49,14 @@ hist(total_steps_day_imp$x, xlab="Steps (imputed)", ylab="Number of days", main 
 abline(v=mean(total_steps_day_imp$x), lwd=3)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
-```{r}
+
+```r
 activity$weekday <- weekdays(activity$date)
 activity_WKND <- subset(activity, grepl("S(at|un)", activity$weekday))
 activity_WEEK <- subset(activity, !grepl("S(at|un)", activity$weekday))
@@ -62,4 +68,6 @@ mean_steps_WKND <- aggregate(activity_WKND$steps, by=list(activity_WKND$date), F
 hist(mean_steps_WKND$x, xlab="Mean steps weekends", ylab = "Number of days", main = NA, col = "#CD3333", 
      border = "white", breaks = seq(0,80, 10), ylim=c(0,14))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
